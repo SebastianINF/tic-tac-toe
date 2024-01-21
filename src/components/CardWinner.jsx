@@ -1,5 +1,4 @@
 import { TURNS } from '../constants'
-import { Square } from './Square'
 
 export function CardWinner({ winner, turn, resetGame }) {
   if (winner === false) return null
