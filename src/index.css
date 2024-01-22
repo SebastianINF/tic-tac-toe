@@ -10,8 +10,8 @@
   @apply h-full w-full
 }
 
-body, html {
-  @apply bg-[#242424] font-sans text-white h-dvh w-dvw
+body {
+  @apply bg-violet-900 font-sans text-white h-dvh w-dvw
 }
 
 

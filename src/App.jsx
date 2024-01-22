@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Square } from './components/Square'
 import { CardWinner } from './components/CardWinner'
+import { OffSpeaker, OnSpeaker } from './components/SvgSpeaker'
 import { Board } from './components/Board'
 import { Marker } from './components/marker'
 import { TURNS } from './constants/index'
 import { launchConfetti } from './function/confetti'
+import { playAudio } from './function/playAudio'
 import {
   saveGameToStorage,
   resetGameStorage,
@@ -40,6 +42,12 @@ export default function App() {
     if (drawStorage) return parseInt(drawStorage)
     return 0
   })
+  const [audio, setAudio] = useState(() => {
+    const audioStorage = localStorage.getItem('audio')
+    if (!audioStorage) return true
+    if (audioStorage === 'false') return false
+    if (audioStorage === 'true') return true
+  })
 
   const updateBoard = index => {
     if (winner || board[index]) return
@@ -50,6 +58,7 @@ export default function App() {
 
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
+    playAudio(turn, audio)
 
     saveGameToStorage({
       board: newBoard,
@@ -58,6 +67,7 @@ export default function App() {
 
     if (checkWinner(newBoard, turn)) {
       launchConfetti()
+      playAudio('game-over', audio)
       if (turn === TURNS.X) {
         setXWins(xWins + 1)
         saveWinnersToStorage({
@@ -82,6 +92,7 @@ export default function App() {
         oWins,
         draw: draw + 1
       })
+      playAudio('draw', audio)
     }
   }
 
@@ -100,12 +111,18 @@ export default function App() {
     resetWinnersStorage()
   }
 
+  const toggleAudio = () => {
+    setAudio(!audio)
+    window.localStorage.setItem('audio', (!audio).toString())
+  }
+
   return (
-    <main className='flex w-full h-full justify-center items-center flex-col text-5xl relative font-cascadia'>
-      <h1 className='text-center my-1'>Tic Tac Toe</h1>
+    <main className='flex w-full h-full justify-center items-center flex-col text-5xl relative font-sans'>
       <div className='flex justify-between'>
         <Square onClick={handleReset}>🔙</Square>
-        <Square onClick={resetGame}>🔄</Square>
+        <Square onClick={toggleAudio}>
+          {audio ? <OnSpeaker /> : <OffSpeaker />}
+        </Square>
       </div>
       <Board updateBoard={updateBoard} board={board} />
       <section className='flex justify-between'>
@@ -121,7 +138,7 @@ export default function App() {
         </div>
         <div>
           <Marker>{draw === 0 ? '-' : draw}</Marker>
-          <Square onClick={resetGame}>.</Square>
+          <Square onClick={resetGame}>🔄</Square>
         </div>
         <div className='mr-2 text-center'>
           <Marker>{oWins}</Marker>

@@ -4,7 +4,6 @@ export default {
   theme: {
     fontFamily: {
       sans: 'Helvetica, Arial, sans-serif'  ,
-      cascadia: 'Cascadia Code'
     },
 
     extend: {}
