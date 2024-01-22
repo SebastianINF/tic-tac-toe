@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Square } from './components/Square'
 import { CardWinner } from './components/CardWinner'
+import { Board } from './components/Board'
 import { Marker } from './components/marker'
 import { TURNS } from './constants/index'
 import { launchConfetti } from './function/confetti'
@@ -13,6 +14,7 @@ import {
 import { checkEndGame, checkWinner } from './function/logic'
 
 export default function App() {
+  // Las variables de estado de mi aplicación
   const [board, setBoard] = useState(() => {
     const boardStorage = localStorage.getItem('board')
     if (boardStorage) return JSON.parse(boardStorage)
@@ -102,26 +104,10 @@ export default function App() {
     <main className='flex w-full h-full justify-center items-center flex-col text-5xl relative font-cascadia'>
       <h1 className='text-center my-1'>Tic Tac Toe</h1>
       <div className='flex justify-between'>
-        <button
-          onClick={handleReset}
-          className='p-3 m-2 rounded-[3px] border-white border w-[90px] h-[90px] flex justify-center items-center flex-col flex-nowrap hover:bg-slate-600  hover:text-black transition-colors'
-        >
-          🔙
-        </button>
-        <button
-          onClick={resetGame}
-          className='p-3 m-2 rounded-[3px] border-white border w-[90px] h-[90px] flex justify-center items-center flex-col flex-nowrap hover:bg-slate-600  hover:text-black transition-colors'
-        >
-          🔄
-        </button>
+        <Square onClick={handleReset}>🔙</Square>
+        <Square onClick={resetGame}>🔄</Square>
       </div>
-      <div className='grid grid-cols-3'>
-        {board.map((mark, index) => (
-          <Square key={index} updateBoard={updateBoard} index={index}>
-            {mark}
-          </Square>
-        ))}
-      </div>
+      <Board updateBoard={updateBoard} board={board} />
       <section className='flex justify-between'>
         <div className='mr-2'>
           <Marker>{xWins}</Marker>
@@ -135,12 +121,7 @@ export default function App() {
         </div>
         <div>
           <Marker>{draw === 0 ? '-' : draw}</Marker>
-          <button
-            onClick={resetGame}
-            className='p-3 m-2 rounded-[3px] border-white border w-[90px] h-[90px] flex justify-center items-center flex-col flex-nowrap hover:bg-slate-600 hover:text-black transition-colors'
-          >
-            .
-          </button>
+          <Square onClick={resetGame}>.</Square>
         </div>
         <div className='mr-2 text-center'>
           <Marker>{oWins}</Marker>
@@ -153,9 +134,7 @@ export default function App() {
           </div>
         </div>
       </section>
-      {(winner || winner === null) && (
-        <CardWinner winner={winner} turn={turn} resetGame={handleReset} />
-      )}
+      <CardWinner winner={winner} turn={turn} resetGame={handleReset} />
     </main>
   )
 }
